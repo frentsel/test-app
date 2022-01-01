@@ -1,0 +1,10 @@
+:host {
+  .mat-form-field {
+    width: 100%;
+  }
+  .toggle {
+    display: flex;
+    column-gap: 20px;
+    padding-bottom: 10px;
+  }
+}

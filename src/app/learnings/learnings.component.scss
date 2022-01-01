@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  padding: 20px;
+  .headline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: space-between;
+  }
+  h2 {
+    margin-bottom: 0;
+  }
+  .mat-form-field {
+    width: 100%;
+  }
+  table.mat-table {
+    width: 100%;
+  }
+}

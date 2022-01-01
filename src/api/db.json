@@ -1,0 +1,153 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Joy Ford",
+      "avatar": "https://randomuser.me/api/portraits/women/25.jpg",
+      "email": "joy.ford@example.com",
+      "learnings": [
+        1,
+        2,
+        3,
+        8,
+        9,
+        6
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Allen Davidson",
+      "avatar": "https://randomuser.me/api/portraits/men/57.jpg",
+      "email": "allen.davidson@example.com",
+      "learnings": [
+        1,
+        2,
+        3,
+        8,
+        9
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Bessie Peters",
+      "avatar": "https://randomuser.me/api/portraits/women/72.jpg",
+      "email": "bessie.peters@example.com",
+      "learnings": [
+        4,
+        8,
+        9
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Logan Bradley",
+      "avatar": "https://randomuser.me/api/portraits/men/98.jpg",
+      "email": "allen.davidson@example.com",
+      "learnings": [
+        2,
+        3,
+        8
+      ]
+    },
+    {
+      "id": 6,
+      "name": "June Hayes",
+      "email": "june.hayes@example.com",
+      "avatar": "https://randomuser.me/api/portraits/women/21.jpg",
+      "learnings": [
+        2,
+        3,
+        8
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Deann Robertson",
+      "email": "deann.robertson@example.com",
+      "avatar": "https://randomuser.me/api/portraits/women/70.jpg",
+      "learnings": [
+        2,
+        3,
+        5,
+        7,
+        8
+      ]
+    },
+    {
+      "name": "Judd King",
+      "email": "judd.king@example.com",
+      "avatar": "https://randomuser.me/api/portraits/men/2.jpg",
+      "learnings": [
+        4,
+        5,
+        7,
+        8
+      ],
+      "id": 9
+    },
+    {
+      "name": "Claire Dixon",
+      "email": "claire.dixon@example.com",
+      "avatar": "https://randomuser.me/api/portraits/women/14.jpg",
+      "learnings": [
+        1,
+        2,
+        3
+      ],
+      "id": 10
+    },
+    {
+      "name": "Allison Taylor",
+      "email": "allison.taylor@example.com",
+      "avatar": "https://randomuser.me/api/portraits/women/35.jpg",
+      "learnings": [
+        2,
+        3,
+        4
+      ],
+      "id": 11
+    }
+  ],
+  "learnings": [
+    {
+      "id": 1,
+      "name": "Javascript",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name": "CSS",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "HTML",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Python",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name": "PHP",
+      "status": true
+    },
+    {
+      "name": "C++",
+      "status": true,
+      "id": 6
+    },
+    {
+      "name": "NodeJS",
+      "status": true,
+      "id": 8
+    },
+    {
+      "name": "C#",
+      "status": false,
+      "id": 9
+    }
+  ]
+}

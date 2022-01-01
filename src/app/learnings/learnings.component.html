@@ -1,0 +1,74 @@
+<div class="headline">
+  <h2>Learnings</h2>
+  <button mat-stroked-button color="primary" (click)="createLerning()">
+    Add a new Lerning
+  </button>
+</div>
+
+<mat-form-field appearance="outline">
+  <mat-label>Search</mat-label>
+  <input matInput (keyup)="applyFilter($event)" #input />
+  <button
+    *ngIf="input.value"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    (click)="resetFilter()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>
+
+<table
+  [dataSource]="learnings"
+  mat-table
+  matSort
+  matSortActive="name"
+  matSortDisableClear
+  matSortDirection="desc"
+>
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+  </ng-container>
+
+  <!-- Status Column -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-slide-toggle
+        color="primary"
+        [checked]="element.status"
+        (change)="changeStatus($event, element)"
+      >
+      </mat-slide-toggle>
+    </td>
+  </ng-container>
+
+  <!-- Users Column -->
+  <ng-container matColumnDef="users">
+    <th mat-header-cell *matHeaderCellDef>Users</th>
+    <td mat-cell *matCellDef="let element">
+      {{ assignedUsersNumber(element) }}
+    </td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="accent" (click)="deleteEl(element)">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="editEl(element)">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<mat-paginator [length]="resultsLength" [pageSize]="limit"></mat-paginator>

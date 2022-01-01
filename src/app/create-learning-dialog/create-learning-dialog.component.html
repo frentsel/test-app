@@ -1,0 +1,36 @@
+<h2 mat-dialog-title *ngIf="!data.el.id">Create</h2>
+<h2 mat-dialog-title *ngIf="data.el.id">Update</h2>
+<mat-dialog-content class="mat-typography" [formGroup]="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Name" />
+    <mat-error *ngIf="form.controls['name'].hasError('required')"
+      >Name is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Users</mat-label>
+    <mat-select formControlName="users" multiple>
+      <mat-option *ngFor="let user of data.users" [value]="user.id">{{
+        user.name
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="toggle">
+    <span>Status</span>
+    <mat-slide-toggle formControlName="status" color="primary">
+    </mat-slide-toggle>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-button
+    cdkFocusInitial
+    [mat-dialog-close]="true"
+    [disabled]="form.invalid"
+    (click)="save()"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

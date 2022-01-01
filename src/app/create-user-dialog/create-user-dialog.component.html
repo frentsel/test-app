@@ -1,0 +1,45 @@
+<h2 mat-dialog-title *ngIf="!data.user.id">Create</h2>
+<h2 mat-dialog-title *ngIf="data.user.id">Update</h2>
+<mat-dialog-content class="mat-typography" [formGroup]="form">
+  <mat-form-field appearance="outline">
+    <mat-label>User Name</mat-label>
+    <input matInput formControlName="name" placeholder="User Name" />
+    <mat-error *ngIf="form.controls['name'].hasError('required')"
+      >User Name is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" placeholder="Email" />
+    <mat-error *ngIf="form.controls['email'].hasError('required')"
+      >Email is required</mat-error
+    >
+    <mat-error *ngIf="form.controls['email'].hasError('email')"
+      >Email is not valid</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Avatar</mat-label>
+    <input matInput formControlName="avatar" placeholder="Avatar" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Learnings</mat-label>
+    <mat-select formControlName="learnings" multiple>
+      <mat-option *ngFor="let el of data.learnings" [value]="el.id">
+        {{ el.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-button
+    cdkFocusInitial
+    [mat-dialog-close]="true"
+    [disabled]="form.invalid"
+    (click)="submit()"
+  >
+    Submit
+  </button>
+</mat-dialog-actions>
