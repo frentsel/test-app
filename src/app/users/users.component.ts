@@ -68,7 +68,7 @@ export class UsersComponent implements OnInit {
         switchMap((user) => this.userService.create(user)),
         switchMap(() => this.getUsers())
       )
-      .subscribe();
+      .toPromise();
   }
 
   editUser(user: User): void {
@@ -83,12 +83,10 @@ export class UsersComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((status) => status),
-        switchMap((user) => {
-          return this.userService.update(user);
-        }),
+        switchMap((user) => this.userService.update(user)),
         switchMap(() => this.getUsers())
       )
-      .subscribe();
+      .toPromise();
   }
 
   deleteUser(user: User): void {
@@ -174,6 +172,6 @@ export class UsersComponent implements OnInit {
         acc.push(this.learningsMap[id]);
       }
       return acc;
-    }, []);
+    }, []).sort();
   }
 }
