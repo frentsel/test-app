@@ -29,7 +29,7 @@ export class UserService {
     return this.http.post(this.url, payload);
   }
 
-  update(payload: User) {
+  update(payload: Partial<User>) {
     return this.http.patch(`${this.url}/${payload.id}`, payload);
   }
 

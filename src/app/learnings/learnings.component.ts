@@ -1,25 +1,16 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatSort, Sort } from '@angular/material/sort';
-import {
-  filter,
-  forkJoin,
-  lastValueFrom,
-  map,
-  Observable,
-  switchMap,
-  zip,
-} from 'rxjs';
+import { MatInput } from '@angular/material/input';
+import { filter, lastValueFrom, map, switchMap, zip } from 'rxjs';
+import { pick } from 'lodash';
 
 import { Learning } from './learning.model';
 import { CreateLearningDialogComponent } from '../create-learning-dialog/create-learning-dialog.component';
 import { User } from '../users/user.model';
-import { MatInput } from '@angular/material/input';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { difference, find, uniq } from 'lodash';
 import { UserService } from '../services/user.service';
 import { LearningService } from '../services/learning.service';
 
@@ -42,13 +33,12 @@ export class LearningsComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private http: HttpClient,
     private userService: UserService,
     private learningService: LearningService
   ) {}
 
   ngOnInit(): void {
-    lastValueFrom(this.getUsers());
+    lastValueFrom(this.getData());
   }
 
   deleteEl(el: Learning): void {
@@ -64,8 +54,8 @@ export class LearningsComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((status) => status),
-        switchMap(() => this.learningService.delete(el)),
-        switchMap(() => this.getUsers())
+        switchMap(() => this.learningService.delete(el, this.users)),
+        switchMap(() => this.getData())
       )
       .toPromise();
   }
@@ -74,11 +64,11 @@ export class LearningsComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
-    lastValueFrom(this.getUsers('id', 'desc', filterValue));
+    lastValueFrom(this.getData('id', 'desc', filterValue));
   }
 
   resetFilter() {
-    lastValueFrom(this.getUsers('id', 'desc', ''));
+    lastValueFrom(this.getData('id', 'desc', ''));
     this.input.value = '';
   }
 
@@ -94,39 +84,10 @@ export class LearningsComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((status) => status),
-        switchMap((el) => {
-          const users = [...el.users];
-          delete el.users;
-          const queries = [this.learningService.update(el)];
-          const prevUsers = this.users
-            .filter((user) => user.learnings.includes(el.id))
-            .map((user) => user.id);
-          const remove = difference(prevUsers, users);
-          const add = difference(users, prevUsers);
-
-          // remove the lerning from the user
-          remove.forEach((id) => {
-            const user = find(this.users, { id });
-            if (user) {
-              user.learnings = uniq(
-                user.learnings.filter((lid) => lid !== el.id)
-              );
-              queries.push(this.userService.update(user));
-            }
-          });
-
-          // add the lerning from the user
-          add.forEach((id) => {
-            const user = find(this.users, { id });
-            if (user) {
-              user.learnings.push(el.id);
-              queries.push(this.userService.update(user));
-            }
-          });
-
-          return forkJoin(queries);
-        }),
-        switchMap(() => this.getUsers())
+        switchMap((payload) =>
+          this.learningService.update(payload, payload.users, this.users)
+        ),
+        switchMap(() => this.getData())
       )
       .toPromise();
   }
@@ -144,33 +105,17 @@ export class LearningsComponent implements OnInit {
       .pipe(
         filter((status) => status),
         switchMap((data: Learning & { users: number[] }) => {
-          const payload = { name: data.name, status: data.status };
-          return this.learningService
-            .create(payload)
-            .pipe(map((learning) => ({ ...learning, ...data })));
+          const payload = pick(data, ['name', 'status']);
+          return this.learningService.create(payload, data.users, this.users);
         }),
-        switchMap((data: Learning & { users: number[] }) => {
-          const requests: Observable<Object | void>[] = [this.getUsers()];
-          if (data.users?.length) {
-            this.users.forEach((user) => {
-              if ((data.users || []).includes(user.id)) {
-                const payload = {
-                  ...user,
-                  learnings: [...user.learnings, data.id],
-                };
-                requests.push(this.userService.update(payload));
-              }
-            });
-          }
-          return forkJoin(requests);
-        })
+        switchMap(() => this.getData())
       )
       .subscribe();
   }
 
   changeStatus($event: MatSlideToggleChange, learning: Learning): void {
     lastValueFrom(
-      this.learningService.update({
+      this.learningService.updateStatus({
         id: learning.id,
         status: $event.checked,
       })
@@ -183,7 +128,7 @@ export class LearningsComponent implements OnInit {
         filter((a: Sort) => Boolean(a.direction)),
         switchMap((a: Sort) => {
           this.paginator.pageIndex = 0;
-          return this.getUsers(a.active, a.direction);
+          return this.getData(a.active, a.direction);
         })
       )
       .subscribe();
@@ -192,7 +137,7 @@ export class LearningsComponent implements OnInit {
       .pipe(
         switchMap(({ pageIndex }: PageEvent) => {
           this.page = pageIndex + 1;
-          return this.getUsers();
+          return this.getData();
         })
       )
       .subscribe();
@@ -204,7 +149,7 @@ export class LearningsComponent implements OnInit {
       .map(({ id }) => id).length;
   }
 
-  private getUsers(_sort = 'id', _order = 'desc', q = '') {
+  private getData(_sort = 'id', _order = 'desc', q = '') {
     return zip(
       this.learningService.get({
         _sort,
