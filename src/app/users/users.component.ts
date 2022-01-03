@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getUsers().toPromise();
+    this.getData().subscribe();
   }
 
   createUser(): void {
@@ -66,9 +66,9 @@ export class UsersComponent implements OnInit {
       .pipe(
         filter((status) => status),
         switchMap((user) => this.userService.create(user)),
-        switchMap(() => this.getUsers())
+        switchMap(() => this.getData())
       )
-      .toPromise();
+      .subscribe();
   }
 
   editUser(user: User): void {
@@ -84,9 +84,9 @@ export class UsersComponent implements OnInit {
       .pipe(
         filter((status) => status),
         switchMap((user) => this.userService.update(user)),
-        switchMap(() => this.getUsers())
+        switchMap(() => this.getData())
       )
-      .toPromise();
+      .subscribe();
   }
 
   deleteUser(user: User): void {
@@ -103,20 +103,20 @@ export class UsersComponent implements OnInit {
       .pipe(
         filter((status) => status),
         switchMap(() => this.userService.delete(user)),
-        switchMap(() => this.getUsers())
+        switchMap(() => this.getData())
       )
-      .toPromise();
+      .subscribe();
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
-    this.getUsers('id', 'desc', filterValue).toPromise();
+    this.getData('id', 'desc', filterValue).subscribe();
   }
 
   resetFilter() {
-    this.getUsers('id', 'desc', '').toPromise();
+    this.getData('id', 'desc', '').subscribe();
     this.input.value = '';
   }
 
@@ -126,7 +126,7 @@ export class UsersComponent implements OnInit {
         filter((a: Sort) => Boolean(a.direction)),
         switchMap((a: Sort) => {
           this.paginator.pageIndex = 0;
-          return this.getUsers(a.active, a.direction);
+          return this.getData(a.active, a.direction);
         })
       )
       .subscribe();
@@ -135,14 +135,14 @@ export class UsersComponent implements OnInit {
       .pipe(
         switchMap(({ pageIndex }: PageEvent) => {
           this.page = pageIndex + 1;
-          return this.getUsers();
+          return this.getData();
         })
       )
       .subscribe();
   }
 
-  private getUsers(_sort = 'id', _order = 'desc', q = '') {
-    const getUsers$ = this.userService.get({
+  getData(_sort = 'id', _order = 'desc', q = '') {
+    const getData$ = this.userService.get({
       _sort,
       _order,
       _page: this.page,
@@ -151,7 +151,7 @@ export class UsersComponent implements OnInit {
     });
     return zip(
       this.learningService.getAllItems(),
-      getUsers$
+      getData$
     ).pipe(
       map(([learnings, { items, count }]) => {
         this.learnings = learnings as Learning[];

@@ -49,7 +49,11 @@ export class LearningService {
     );
   }
 
-  update(el: { id: number } & Partial<Learning>, usersIds: number[] = [], users: User[] = []) {
+  update(
+    el: { id: number } & Partial<Learning>,
+    usersIds: number[] = [],
+    users: User[] = []
+  ) {
     return this.http.patch(`${this.url}/${el.id}`, omit(el, 'users')).pipe(
       switchMap(() => {
         const queries: any = [];

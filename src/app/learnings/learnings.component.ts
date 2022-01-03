@@ -4,7 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatInput } from '@angular/material/input';
-import { filter, lastValueFrom, map, switchMap, zip } from 'rxjs';
+import { filter, map, switchMap, zip } from 'rxjs';
 import { pick } from 'lodash';
 
 import { Learning } from './learning.model';
@@ -38,7 +38,7 @@ export class LearningsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    lastValueFrom(this.getData());
+    this.getData().subscribe();
   }
 
   deleteEl(el: Learning): void {
@@ -57,18 +57,18 @@ export class LearningsComponent implements OnInit {
         switchMap(() => this.learningService.delete(el, this.users)),
         switchMap(() => this.getData())
       )
-      .toPromise();
+      .subscribe();
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
-    lastValueFrom(this.getData('id', 'desc', filterValue));
+    this.getData('id', 'desc', filterValue).subscribe();
   }
 
   resetFilter() {
-    lastValueFrom(this.getData('id', 'desc', ''));
+    this.getData('id', 'desc', '').subscribe();
     this.input.value = '';
   }
 
@@ -89,7 +89,7 @@ export class LearningsComponent implements OnInit {
         ),
         switchMap(() => this.getData())
       )
-      .toPromise();
+      .subscribe();
   }
 
   createLerning(): void {
@@ -114,12 +114,12 @@ export class LearningsComponent implements OnInit {
   }
 
   changeStatus($event: MatSlideToggleChange, learning: Learning): void {
-    lastValueFrom(
-      this.learningService.updateStatus({
+    this.learningService
+      .updateStatus({
         id: learning.id,
         status: $event.checked,
       })
-    );
+      .subscribe();
   }
 
   ngAfterViewInit() {
@@ -149,7 +149,7 @@ export class LearningsComponent implements OnInit {
       .map(({ id }) => id).length;
   }
 
-  private getData(_sort = 'id', _order = 'desc', q = '') {
+  getData(_sort = 'id', _order = 'desc', q = '') {
     return zip(
       this.learningService.get({
         _sort,
